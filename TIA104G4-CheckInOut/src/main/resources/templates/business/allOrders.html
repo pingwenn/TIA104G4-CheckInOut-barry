@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>飯店管理系統</title>
+    <style>
+        /* 全局樣式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            line-height: 1.5;
+            background-color: #f9f9f9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* Header 樣式 */
+        header {
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            font-size: 18px;
+        }
+
+        /* Logo */
+        header .logo a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        header .logo a img {
+            width: 40px;
+            height: 40px;
+        }
+
+        header .logo a span {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        header nav {
+            display: flex;
+            gap: 25px;
+        }
+
+        header nav a {
+            font-size: 1rem;
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        header nav a:hover,
+        header nav a.active {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        header .user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #333;
+            position: relative;
+        }
+
+        header .user .icon {
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        /* Hotel Button */
+        header .user .hotel-button {
+            background-color: #2c3e50;
+            /* 深藍色 */
+            color: #fff;
+            border: 1px solid #34495e;
+            /* 邊框顏色和背景稍微區分 */
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 25px;
+            cursor: pointer;
+            position: relative;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Hover effect */
+        header .user .hotel-button:hover {
+            background-color: #34495e;
+            /* 稍微變深的顏色 */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+            /* 更柔和的陰影 */
+        }
+
+        /* Active state */
+        header .user .hotel-button:active {
+            background-color: #1a252f;
+            /* 點擊時變得更深 */
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Focused state (accessibility improvement) */
+        header .user .hotel-button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.5);
+            /* 聚焦時顯示藍色陰影 */
+        }
+
+
+        /* Dropdown menu */
+        header .user .dropdown {
+            display: none;
+            position: absolute;
+            top: 40px;
+            right: 0;
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            width: 150px;
+            overflow: hidden;
+        }
+
+        header .user .dropdown ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        header .user .dropdown ul li {
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s ease;
+        }
+
+        header .user .dropdown ul li:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        header .user .dropdown ul li:last-child {
+            border-bottom: none;
+        }
+
+        /* 登出的彈窗樣式 */
+        #logout-modal {
+            display: none;
+            /* 初始為隱藏 */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* 半透明背景 */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #logout-modal.show {
+            display: flex;
+            /* 顯示彈窗 */
+        }
+
+        #logout-modal .logout-modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+        }
+
+        #logout-modal .logout-modal-content h2 {
+            margin-bottom: 10px;
+        }
+
+        #logout-modal .logout-modal-content p {
+            margin: 10px 0;
+        }
+
+        #logout-modal .logout-modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        #logout-modal .logout-modal-actions button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #logout-modal .logout-modal-actions #logout-modal-logout-button {
+            background-color: #007bff;
+            color: white;
+        }
+
+        #logout-modal .logout-modal-actions #logout-modal-switch-button {
+            background-color: #ccc;
+            color: black;
+        }
+
+        /* x 按鈕 */
+        #logout-modal .logout-modal-content .logout-modal-close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #aaa;
+            transition: color 0.3s ease;
+        }
+
+        #logout-modal .logout-modal-content .logout-modal-close-btn:hover {
+            color: #333;
+        }
+
+
+        /* Layout */
+        .container {
+            display: flex;
+            margin: 20px auto;
+            max-width: 1200px;
+            flex: 1;
+        }
+
+        aside {
+            width: 300px;
+            /* aside寬度保持300px */
+            padding: 20px;
+        }
+
+        aside nav {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        aside nav a {
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 1rem;
+            color: #333;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        aside nav a.active,
+        aside nav a:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        /* main主內容 */
+        /* 主體樣式 */
+        main {
+            width: 1500px;
+            /* 修改為1500px */
+            background-color: #fff;
+            padding: 30px;
+            margin-left: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        main h1 {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            /* 增加底部間距 */
+            text-align: center;
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            /* 加入底部邊框 */
+            padding-bottom: 10px;
+            /* 調整與底部邊框的間距 */
+        }
+
+        /* 篩選區塊樣式 */
+        .filter-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            gap: 15px;
+        }
+
+        .filter-section input,
+        .filter-section button {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+        }
+
+        .filter-section button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .filter-section button:hover {
+            background-color: #0056b3;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 表格樣式 */
+        .orders-section table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .orders-section th {
+            background-color: #007bff;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: bold;
+            padding: 12px 10px;
+            text-align: center;
+        }
+
+        .orders-section td {
+            padding: 12px 10px;
+            text-align: center;
+            font-size: 0.95rem;
+            color: #333;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .orders-section tbody tr {
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .orders-section tbody tr:hover {
+            background-color: #f0f8ff;
+            transform: scale(1.01);
+            /* 輕微放大效果 */
+            cursor: pointer;
+        }
+
+        /* 狀態欄顏色 */
+        .orders-section .status-complete {
+            color: #28a745;
+            /* 綠色：已完成 */
+            font-weight: bold;
+        }
+
+        .orders-section .status-incomplete {
+            color: #dc3545;
+            /* 紅色：未完成 */
+            font-weight: bold;
+        }
+
+
+        /* 分頁樣式 */
+        /* 分頁按鈕樣式 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 20px;
+        }
+
+        .page-button {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .page-button.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .page-button:hover {
+            background-color: #f0f0f0;
+        }
+
+        .page-button:disabled {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
+
+        /* 狀態欄顏色 */
+        .status-complete {
+            color: #28a745;
+            /* 綠色：已完成 */
+            font-weight: bold;
+        }
+
+        .status-incomplete {
+            color: #dc3545;
+            /* 紅色：未完成 */
+            font-weight: bold;
+        }
+
+        /* Footer 樣式 */
+        footer {
+            background-color: #333;
+            /* footer 改為深色 */
+            padding: 10px 30px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #fff;
+            border-top: 1px solid #ddd;
+            margin-top: auto;
+        }
+
+        thead th {
+            cursor: pointer;
+            position: relative;
+            padding-right: 20px; /* 預留空間給圖標 */
+        }
+
+        thead th.sort-asc::after {
+            content: "▲";
+            position: absolute;
+            right: 5px;
+            color: #007bff;
+        }
+
+        thead th.sort-desc::after {
+            content: "▼";
+            position: absolute;
+            right: 5px;
+            color: #007bff;
+        }
+
+        table td.status-reserved {
+            color: blue;
+            font-weight: bold;
+        }
+
+        table td.status-unchecked {
+            color: orange;
+            font-weight: bold;
+        }
+
+        table td.status-overdue {
+            color: red;
+            font-weight: bold;
+        }
+
+        table td.status-complete {
+            color: green;
+            font-weight: bold;
+        }
+
+        table td.status-cancelled {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <a th:href="@{/frontDesk}">
+                <img th:src="@{/imgs/CheckInOut_logo.png}" alt="logo">
+                <span>飯店管理系統</span>
+            </a>
+        </div>
+        <nav>
+            <a th:href="@{/frontDesk}">櫃台系統</a>
+            <a th:href="@{/business}" th:if="${#httpSession.getAttribute('employee').title == '負責人' ||
+          #httpSession.getAttribute('employee').title == '總經理'}">飯店管理</a>
+            <a th:href="@{/orders}" class="active">訂單管理</a>
+           <a th:href="@{/comment}">評論管理</a>
+            <a th:href="@{/client}">客戶管理</a>
+<!--            <a th:href="@{/report}">報表分析</a>-->
+        </nav>
+        <div class="user">
+            <span class="icon">🔔</span>
+            <span class="icon"><a th:href="@{/backChatRoom}" title="進入客服聊天室">💬</a></span>
+            <button class="hotel-button" th:text="${#httpSession.getAttribute('hotel').name}"></button>
+            <div class="dropdown">
+                <ul>
+                    <li><a th:href="@{/account}">帳號設定</a></li>
+                    <li id="logout-option">登出</li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <!-- 登出彈窗 -->
+    <div id="logout-modal" class="hidden">
+        <div class="logout-modal-content">
+            <span class="logout-modal-close-btn" id="logout-modal-close-btn">×</span>
+            <h2>登出選項</h2>
+            <p>您確定要登出或切換使用者嗎？</p>
+            <div class="logout-modal-actions">
+                <!-- 登出按鈕 -->
+                <form th:action="@{/logout}" method="POST" id="logout-form">
+                    <button type="submit" id="logout-modal-logout-button">登出</button>
+                </form>
+                <!-- 切換使用者按鈕 -->
+                <form th:action="@{/switch-user}" method="POST" id="switch-user-form">
+                    <button type="submit" id="logout-modal-switch-button">切換使用者</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- 主體內容 -->
+    <div class="container">
+        <!-- Aside -->
+        <aside>
+            <nav>
+                <a th:href="@{/orders}" class="active">所有訂單</a>
+                <a th:href="@{/orders/orderDetail}">訂單明細</a>
+            </nav>
+        </aside>
+
+        <!-- Main -->
+        <main>
+            <h1>所有訂單</h1>
+            <section class="filter-section">
+                <input type="date" id="filter-date" placeholder="請選擇日期">
+                <input type="text" id="filter-name" placeholder="輸入查詢內容">
+                <button id="search-btn">搜尋</button>
+            </section>
+            <section class="orders-section">
+                <table>
+                    <thead>
+                        <tr>
+                            <th onclick="changeSort('orderId')">訂單編號</th>
+                            <th onclick="changeSort('checkInDate')">Check in</th>
+                            <th onclick="changeSort('checkOutDate')">Check out</th>
+                            <th onclick="changeSort('memberId')">客戶編號</th>
+                            <th onclick="changeSort('memberName')">客戶姓名</th>
+                            <th onclick="changeSort('totalAmount')">金額</th>
+                            <th onclick="changeSort('status')">訂單狀態</th>
+                        </tr>
+                    </thead>
+                    <tbody id="order-table-body">
+                        <!-- 動態生成的資料會插入此處 -->
+                    </tbody>
+                </table>
+            </section>
+
+            <div class="pagination">
+                <button class="pagination-btn first-page">第一頁</button>
+                <button class="pagination-btn prev-page">上一頁</button>
+                <div id="page-numbers" class="page-numbers">
+                    <!-- 页码动态生成 -->
+                </div>
+                <button class="pagination-btn next-page">下一頁</button>
+                <button class="pagination-btn last-page">最後一頁</button>
+            </div>
+
+
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        &copy; 2024 Check in out. All rights reserved.
+    </footer>
+
+    <script>
+        const contextPath = "[[${#httpServletRequest.contextPath}]]"; // 動態獲取 contextPath
+        const hotelId = "[[${#httpSession.getAttribute('hotel').hotelId}]]";
+        let sortField = 'orderId'; // 預設排序字段
+        let sortDirection = 'desc'; // 預設排序方向
+
+        //飯店彈窗
+        document.querySelector('.hotel-button').addEventListener('click', () => {
+            const dropdown = document.querySelector('.dropdown');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // 取得彈窗和按鈕
+        const logoutModal = document.getElementById("logout-modal");
+        const logoutModalCloseBtn = document.getElementById("logout-modal-close-btn");
+        const logoutModalLogoutButton = document.getElementById("logout-modal-logout-button");
+        const logoutModalSwitchButton = document.getElementById("logout-modal-switch-button");
+        const logoutOption = document.getElementById("logout-option"); // 假設觸發按鈕未修改 id
+
+        // 顯示彈窗
+        logoutOption.addEventListener("click", function () {
+            logoutModal.classList.add("show"); // 添加 class 顯示彈窗
+        });
+
+        // 關閉彈窗 (x 按鈕)
+        logoutModalCloseBtn.addEventListener("click", function () {
+            logoutModal.classList.remove("show"); // 移除 class 隱藏彈窗
+        });
+
+        // 登出按鈕功能
+        logoutModalLogoutButton.addEventListener("click", function () {
+            alert("您已登出！");
+            document.location.href = "login-1.html";
+        });
+
+        // 切換使用者按鈕功能
+        logoutModalSwitchButton.addEventListener("click", function () {
+            alert("切換使用者！");
+            document.location.href = "login-2.html";; // 隱藏彈窗
+        });
+
+        // 點擊彈窗外部關閉 (選擇性功能)
+        window.addEventListener("click", function (e) {
+            if (e.target === logoutModal) {
+                logoutModal.classList.remove("show"); // 隱藏彈窗
+            }
+        });
+
+
+        // 1/10新增內容
+        document.addEventListener('DOMContentLoaded', () => {
+            // 局部變數和函數，僅限於此作用域
+            let orders = []; // 儲存 API 返回的數據
+            let currentPage = 1;
+            const rowsPerPage = 10;
+            const orderTableBody = document.getElementById('order-table-body');
+            const paginationContainer = document.querySelector('.pagination');
+            let sortField = 'orderId'; // 預設排序字段
+            let sortDirection = 'desc'; // 預設排序方向
+
+            // 初始化加載數據
+            fetchOrders();
+
+            async function fetchOrders() {
+                try {
+                    const response = await fetch(`${contextPath}/order/all?hotelId=${hotelId}`);
+                    if (!response.ok) throw new Error('API 錯誤，無法獲取數據');
+                    orders = await response.json();
+
+                    // 初始化排序並渲染
+                    sortOrders();
+                    renderTable(currentPage);
+                    renderPagination();
+                } catch (error) {
+                    console.error('數據加載失敗:', error);
+                    orders = []; // 確保為空列表以便顯示「無訂單資訊」
+                    renderTable(currentPage);
+                }
+            }
+
+            // 日期格式化函數
+            function formatDate(dateString) {
+                if (!dateString) return '未知日期';
+                const date = new Date(dateString);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+
+            function renderTable(page) {
+                if (!orderTableBody) {
+                    console.error("Table body element not found.");
+                    return;
+                }
+
+                orderTableBody.innerHTML = ''; // 清空表格
+
+                if (orders.length === 0) {
+                    // 如果沒有訂單，顯示「無訂單資訊」
+                    const row = document.createElement('tr');
+                    const cell = document.createElement('td');
+                    cell.colSpan = 7; // 表格的總欄數
+                    cell.textContent = '無訂單資訊';
+                    cell.style.textAlign = 'center';
+                    cell.style.color = '#999';
+                    row.appendChild(cell);
+                    orderTableBody.appendChild(row);
+                    return;
+                }
+
+                const today = new Date();
+                today.setHours(0, 0, 0, 0); // 將時間設為當天開始時間
+
+                orderTableBody.innerHTML = ''; // 清空表格
+
+                const start = (page - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+                const pageData = orders.slice(start, end); // 取出對應頁的數據
+
+                pageData.forEach(order => {
+                    const checkInDate = new Date(order.checkInDate);
+                    const checkOutDate = new Date(order.checkOutDate);
+                    checkInDate.setHours(0, 0, 0, 0);
+                    checkOutDate.setHours(0, 0, 0, 0);
+                    let statusText = '';
+                    let statusClass = '';
+
+                    if (checkInDate.getTime() === today.getTime()) {
+                        // Check-in 是今天且狀態是 0
+                        if (order.status === 0) {
+                            statusText = '未報到';
+                            statusClass = 'status-unchecked';
+                        } else if (order.status === 1) {
+                            statusText = '已報到';
+                            statusClass = 'status-complete';
+                        } else if (order.status === 2) {
+                            statusText = '未知狀態';
+                            statusClass = 'status-unknow';
+                        } else if (order.status === 3) {
+                            statusText = '取消訂單';
+                            statusClass = 'status-cancelled';
+                        }
+                    } else if (checkOutDate.getTime() === today.getTime()) {
+                        // Check-out 是今天且狀態是 0
+                        if (order.status === 0) {
+                            statusText = '逾時未報到';
+                            statusClass = 'status-overdue';
+                        } else if (order.status === 1) {
+                            statusText = '未退房';
+                            statusClass = 'status-unchecked';
+                        } else if (order.status === 2) {
+                            statusText = '已退房';
+                            statusClass = 'status-complete';
+                        } else if (order.status === 3) {
+                            statusText = '取消訂單';
+                            statusClass = 'status-cancelled';
+                        }
+                    } else if (today.getTime() > checkInDate.getTime() && today.getTime() < checkOutDate.getTime()) {
+                        // 判斷是否介於 Check-In 和 Check-Out 之間
+                        if (order.status === 0) {
+                            statusText = '逾時未報到';
+                            statusClass = 'status-overdue';
+                        } else if (order.status === 1) {
+                            statusText = '入住中';
+                            statusClass = 'status-complete';
+                        } else if (order.status === 2) {
+                            statusText = '已退房';
+                            statusClass = 'status-complete';
+                        } else if (order.status === 3) {
+                            statusText = '取消訂單';
+                            statusClass = 'status-cancelled';
+                        }
+                    } else if (checkOutDate.getTime() < today.getTime()) {
+                        // 歷史訂單
+                        if (order.status === 0 || order.status === 1) {
+                            statusText = '逾時未報到';
+                            statusClass = 'status-overdue';
+                        } else if (order.status === 2) {
+                            statusText = '訂單完成';
+                            statusClass = 'status-complete';
+                        } else if (order.status === 3) {
+                            statusText = '取消訂單';
+                            statusClass = 'status-cancelled';
+                        }
+                    } else if (checkInDate.getTime() > today.getTime()) {
+                        // 未來訂單
+                        if (order.status === 0) {
+                            statusText = '預約成功';
+                            statusClass = 'status-reserved';
+                        } else if (order.status === 1) {
+                            statusText = '預約成功';
+                            statusClass = 'status-reserved';
+                        } else if (order.status === 2) {
+                            statusText = '預約成功';
+                            statusClass = 'status-reserved';
+                        } else if (order.status === 3) {
+                            statusText = '取消訂單';
+                            statusClass = 'status-cancelled';
+                        }
+                    }
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+            <td>${order.orderId}</td>
+            <td>${formatDate(order.checkInDate)}</td>
+            <td>${formatDate(order.checkOutDate)}</td>
+            <td>${order.memberId || "N/A"}</td>
+            <td>${order.memberName || "N/A"}</td>
+            <td>${order.totalAmount}</td>
+            <td class="${statusClass}">
+                ${statusText}
+            </td>
+        `;
+
+                    // 添加點擊事件
+                    row.addEventListener('click', () => {
+                        window.location.href = `${contextPath}/orders/orderDetail?orderId=${order.orderId}`;
+                    });
+
+                    orderTableBody.appendChild(row);
+                });
+            }
+
+            function renderPagination() {
+                paginationContainer.innerHTML = '';
+                const totalPages = Math.ceil(orders.length / rowsPerPage); // 计算总页数
+                const maxVisiblePages = 10; // 同时显示的最多页数
+                let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+                let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+                if (endPage - startPage + 1 < maxVisiblePages) {
+                    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                }
+
+                // 添加 "回到第一页" 按钮
+                if (currentPage > 1) {
+                    const firstButton = document.createElement('button');
+                    firstButton.textContent = '第一頁';
+                    firstButton.classList.add('page-button', 'first-page');
+                    firstButton.addEventListener('click', () => {
+                        currentPage = 1;
+                        renderTable(currentPage);
+                        renderPagination();
+                    });
+                    paginationContainer.appendChild(firstButton);
+                }
+
+                // 添加上一页按钮
+                if (currentPage > 1) {
+                    const prevButton = document.createElement('button');
+                    prevButton.textContent = '上一頁';
+                    prevButton.classList.add('page-button', 'prev-page');
+                    prevButton.addEventListener('click', () => {
+                        currentPage--;
+                        renderTable(currentPage);
+                        renderPagination();
+                    });
+                    paginationContainer.appendChild(prevButton);
+                }
+
+                // 添加页码按钮
+                for (let i = startPage; i <= endPage; i++) {
+                    const button = document.createElement('button');
+                    button.textContent = i;
+                    button.classList.add('page-button');
+                    if (i === currentPage) button.classList.add('active');
+                    button.addEventListener('click', () => {
+                        currentPage = i;
+                        renderTable(currentPage);
+                        renderPagination();
+                    });
+                    paginationContainer.appendChild(button);
+                }
+
+                // 添加下一页按钮
+                if (currentPage < totalPages) {
+                    const nextButton = document.createElement('button');
+                    nextButton.textContent = '下一頁';
+                    nextButton.classList.add('page-button', 'next-page');
+                    nextButton.addEventListener('click', () => {
+                        currentPage++;
+                        renderTable(currentPage);
+                        renderPagination();
+                    });
+                    paginationContainer.appendChild(nextButton);
+                }
+
+                // 添加 "跳到最后一页" 按钮
+                if (currentPage < totalPages) {
+                    const lastButton = document.createElement('button');
+                    lastButton.textContent = '最後一頁';
+                    lastButton.classList.add('page-button', 'last-page');
+                    lastButton.addEventListener('click', () => {
+                        currentPage = totalPages;
+                        renderTable(currentPage);
+                        renderPagination();
+                    });
+                    paginationContainer.appendChild(lastButton);
+                }
+            }
+
+
+            function updateSortIcons() {
+                const headers = document.querySelectorAll('thead th');
+                headers.forEach(header => {
+                    header.classList.remove('sort-asc', 'sort-desc'); // 移除排序類
+                    const field = header.getAttribute('onclick').match(/changeSort\('(\w+)'\)/)[1];
+                    if (field === sortField) {
+                        header.classList.add(sortDirection === 'asc' ? 'sort-asc' : 'sort-desc');
+                    }
+                });
+            }
+
+            function sortOrders() {
+                orders.sort((a, b) => {
+                    let valueA = a[sortField];
+                    let valueB = b[sortField];
+
+                    // 將數值字段轉換為數字類型
+                    if (sortField === 'orderId' || sortField === 'totalAmount') {
+                        valueA = Number(valueA);
+                        valueB = Number(valueB);
+                    }
+
+                    // 處理數值和字符串排序
+                    if (typeof valueA === 'number' && typeof valueB === 'number') {
+                        return sortDirection === 'asc' ? valueA - valueB : valueB - valueA;
+                    }
+                    if (typeof valueA === 'string' && typeof valueB === 'string') {
+                        return sortDirection === 'asc' ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
+                    }
+                    return 0; // 如果值為 null 或 undefined，不改變順序
+                });
+            }
+
+            // 將 changeSort 函數暴露到全局作用域
+            window.changeSort = function (field) {
+                if (sortField === field) {
+                    // 切換排序方向
+                    sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+                } else {
+                    // 更改排序字段
+                    sortField = field;
+                    sortDirection = 'asc'; // 默認升序
+                }
+                updateSortIcons();
+                sortOrders();
+                renderTable(currentPage); // 重新渲染表格
+            };
+
+            // 複合查詢
+            const searchButton = document.getElementById("search-btn");
+            const dateInput = document.getElementById("filter-date");
+            const keywordInput = document.getElementById("filter-name");
+            const tableBody = document.getElementById("orders-table-body");
+
+            keywordInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    searchButton.click();
+                }
+            });
+
+            // 搜尋功能
+            // 複合查詢功能
+            searchButton.addEventListener("click", () => {
+                const selectedDate = dateInput.value; // 取得日期
+                const keyword = keywordInput.value.trim(); // 取得關鍵字
+
+                const queryParams = new URLSearchParams();
+
+                // 如果有選擇日期，加入參數
+                if (selectedDate) queryParams.append("date", selectedDate);
+
+                // 如果有輸入關鍵字，加入參數
+                if (keyword) queryParams.append("keyword", keyword);
+
+                // 如果未輸入任何條件，提示用戶
+                if (!selectedDate && !keyword) {
+                    alert("請至少輸入一個查詢條件！");
+                    return;
+                }
+
+                // 發送 API 請求
+                const fullUrl = `${contextPath}/order/search?${queryParams.toString()}`;
+                console.log("Request URL:", fullUrl);
+
+                fetch(fullUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Failed to fetch search results: HTTP ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(results => {
+                        if (!results || results.length === 0) {
+                            alert("未找到符合條件的結果！");
+                            return;
+                        }
+
+                        // 清空表格內容並更新為新數據
+                        orders = results; // 更新全域變數 orders
+                        currentPage = 1; // 重置為第 1 頁
+                        renderTable(currentPage); // 渲染新的表格內容
+                        renderPagination(); // 更新分頁按鈕
+                    })
+                    .catch(error => {
+                        console.error("Error fetching search results:", error);
+                        alert("查詢失敗，請稍後再試！");
+                    });
+            });
+
+        });
+    </script>
+</body>
+
+</html>

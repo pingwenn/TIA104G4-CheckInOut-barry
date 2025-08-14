@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>會員資料</title>
+  <link rel="stylesheet" th:href="@{/css/admin/member-backend.css}">
+  <link rel="stylesheet" th:href="@{/css/admin/headerfooter.css}">
+  
+
+</head>
+<body>
+  <!-- 動態導入header -->
+  <div th:replace="~{admin/backend-header :: header}"></div>
+
+  <main>
+    <section class="company-info">
+      <div class="admin-banner">
+        <h1>會員資料</h1>
+      </div>
+      
+      <!-- 會員資料區塊 -->
+      <div class="member-container">
+        <div class="member-profile">
+           <!-- 顯示會員頭像 -->
+		    <img th:if="${memberAvatar != null}" 
+		         th:src="@{'data:image/jpeg;base64,' + ${memberAvatar}}"
+		         class="member-avatar"
+		         alt="會員頭像" />
+		    <img th:unless="${memberAvatar != null}"
+		         th:src="@{/imgs/user/defaultAvatar.png}"
+		         class="member-avatar"
+		         alt="預設頭像" />
+		    <div class="info-grid">
+		      <div class="info-item" data-label="帳號" id="account">
+		        <span class="content" th:text="${account}"></span>
+		      </div>
+		      <div class="info-item" data-label="姓" id="last-name">
+		        <span class="content" th:text="${lastName}"></span>
+		      </div>
+		      <div class="info-item" data-label="名" id="first-name">
+		        <span class="content" th:text="${firstName}"></span>
+		      </div>
+		      <div class="info-item" data-label="性別" id="gender">
+		        <span class="content" th:text="${gender}"></span>
+		      </div>
+		      <div class="info-item" data-label="生日" id="birthday">
+		        <span class="content" th:text="${birthday}"></span>
+		      </div>
+		      <div class="info-item" data-label="連絡電話" id="phone">
+		        <span class="content" th:text="${phoneNumber}"></span>
+		      </div>
+		      <div class="info-item" data-label="電子郵件" id="email">
+		        <span class="content" th:text="${email}"></span>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+    </section>
+
+	<div class="container">
+	<!-- 訂單資訊區塊 -->
+	<div class="orders">
+		<h3>訂單資訊</h3>
+		<span class="order-count">總訂單數：<span id="totalOrders">0</span></span>
+	</div>
+		<!-- 訂單列表容器 -->
+		<div id="ordersList"></div>
+    </div>
+  </main>
+
+  <!-- 動態導入footer -->
+  <div th:replace="~{admin/backend-footer :: footer}"></div>
+
+  <script th:src="@{/js/admin/header.js}"></script>
+  <script th:src="@{/js/admin/member-backend.js}"></script>
+</body>
+</html>
