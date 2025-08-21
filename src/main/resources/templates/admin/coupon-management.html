@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>優惠券管理</title>
+    <link rel="stylesheet" th:href="@{/css/admin/coupon-management.css}">
+    <link rel="stylesheet" th:href="@{/css/admin/headerfooter.css}">
+    
+</head>
+<body>
+   <!-- Header -->
+    <div th:replace="~{admin/backend-header :: header}"></div>
+
+    <main>
+        <section class="admin-banner">
+            <div class="container">
+                <h1>優惠券管理</h1>
+            </div>
+        </section>
+
+        <section class="container coupon-management">
+            <div class="search-bar">
+                <form th:action="@{/admin/coupon}" method="get" class="d-flex">
+                    <input type="text" class="search-input" name="keyword" 
+                           th:value="${param.keyword}" placeholder="搜尋...">
+                    <button type="submit" class="btn btn-primary">搜尋</button>
+                </form>
+                <div class="action-buttons">
+				    <a th:href="@{/admin/coupon/create}" class="btn btn-success">創建優惠券</a>
+				</div>
+            </div>
+            
+             <table class="coupon-table">
+                <thead>
+                    <tr>
+                        <th>優惠券名稱</th>
+                        <th>描述</th>
+                        <th>兌換數</th>
+                        <th>最低消費金額</th>
+                        <th>可使用時間</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="coupon : ${coupons}">
+                        <td th:text="${coupon.couponName}"></td>
+                        <td th:text="${coupon.couponDetail}"></td>
+                        <td th:text="${#lists.size(coupon.memberCoupons)}"></td>
+                        <td th:text="${coupon.minSpend}"></td>
+                        <td>
+                            <span th:text="${#temporals.format(coupon.activeDate, 'yyyy-MM-dd')}"></span>
+                            至
+                            <span th:text="${#temporals.format(coupon.expiryDate, 'yyyy-MM-dd')}"></span>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+							    <a th:href="@{/admin/coupon/edit/{id}(id=${coupon.couponId})}" 
+							       class="btn btn-sm btn-primary">編輯</a>
+							    <button type="button" class="btn btn-sm btn-danger" 
+							            th:onclick="'deleteCoupon(' + ${coupon.couponId} + ')'">刪除</button>
+							</div>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(coupons)}">
+                        <td colspan="6" class="text-center">目前沒有優惠券</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- 分頁 -->
+            <div th:if="${totalPages > 1}" class="pagination">
+                <span th:each="i : ${#numbers.sequence(1, totalPages)}">
+                    <a th:href="@{/admin/coupon(page=${i-1}, keyword=${param.keyword})}"
+                       th:text="${i}"
+                       th:class="${currentPage == i-1} ? 'active' : ''">
+                    </a>
+                </span>
+            </div>
+        </section>
+    </main>
+    <!-- Footer -->
+    <div th:replace="~{admin/backend-footer :: footer}"></div>
+	
+    <script th:src="@{/js/admin/header.js}"></script>
+    <script th:src="@{/js/admin/coupon-management.js}"></script>
+</body>
+</html>

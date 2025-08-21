@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>飯店管理系統</title>
+    <style>
+        /* 全局樣式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            line-height: 1.5;
+            background-color: #f9f9f9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* Header 樣式 */
+        header {
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            font-size: 18px;
+        }
+
+        /* Logo */
+        header .logo a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        header .logo a img {
+            width: 40px;
+            height: 40px;
+        }
+
+        header .logo a span {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        header nav {
+            display: flex;
+            gap: 25px;
+        }
+
+        header nav a {
+            font-size: 1rem;
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        header nav a:hover,
+        header nav a.active {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        header .user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #333;
+            position: relative;
+        }
+
+        header .user .icon {
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        /* Hotel Button */
+        header .user .hotel-button {
+            background-color: #2c3e50;
+            /* 深藍色 */
+            color: #fff;
+            border: 1px solid #34495e;
+            /* 邊框顏色和背景稍微區分 */
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 25px;
+            cursor: pointer;
+            position: relative;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Hover effect */
+        header .user .hotel-button:hover {
+            background-color: #34495e;
+            /* 稍微變深的顏色 */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+            /* 更柔和的陰影 */
+        }
+
+        /* Active state */
+        header .user .hotel-button:active {
+            background-color: #1a252f;
+            /* 點擊時變得更深 */
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Focused state (accessibility improvement) */
+        header .user .hotel-button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.5);
+            /* 聚焦時顯示藍色陰影 */
+        }
+
+
+        /* Dropdown menu */
+        header .user .dropdown {
+            display: none;
+            position: absolute;
+            top: 40px;
+            right: 0;
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            width: 150px;
+            overflow: hidden;
+        }
+
+        header .user .dropdown ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        header .user .dropdown ul li {
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s ease;
+        }
+
+        header .user .dropdown ul li:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        header .user .dropdown ul li:last-child {
+            border-bottom: none;
+        }
+
+        /* 登出的彈窗樣式 */
+        #logout-modal {
+            display: none;
+            /* 初始為隱藏 */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* 半透明背景 */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #logout-modal.show {
+            display: flex;
+            /* 顯示彈窗 */
+        }
+
+        #logout-modal .logout-modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+        }
+
+        #logout-modal .logout-modal-content h2 {
+            margin-bottom: 10px;
+        }
+
+        #logout-modal .logout-modal-content p {
+            margin: 10px 0;
+        }
+
+        #logout-modal .logout-modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        #logout-modal .logout-modal-actions button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #logout-modal .logout-modal-actions #logout-modal-logout-button {
+            background-color: #007bff;
+            color: white;
+        }
+
+        #logout-modal .logout-modal-actions #logout-modal-switch-button {
+            background-color: #ccc;
+            color: black;
+        }
+
+        /* x 按鈕 */
+        #logout-modal .logout-modal-content .logout-modal-close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #aaa;
+            transition: color 0.3s ease;
+        }
+
+        #logout-modal .logout-modal-content .logout-modal-close-btn:hover {
+            color: #333;
+        }
+
+
+        /* Layout */
+        .container {
+            display: flex;
+            margin: 20px auto;
+            max-width: 1200px;
+            flex: 1;
+        }
+
+        aside {
+            width: 300px;
+            /* aside寬度保持300px */
+            padding: 20px;
+        }
+
+        aside nav {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        aside nav a {
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 1rem;
+            color: #333;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        aside nav a.active,
+        aside nav a:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        /* main主內容 */
+        /* 主體樣式 */
+        main {
+            width: 1500px;
+            /* 修改為1500px */
+            background-color: #fff;
+            padding: 30px;
+            margin-left: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        main h1 {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            /* 增加底部間距 */
+            text-align: center;
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            /* 加入底部邊框 */
+            padding-bottom: 10px;
+            /* 調整與底部邊框的間距 */
+        }
+
+        /* 房型區塊樣式 */
+        .room-type-card {
+            background-color: #fff; /* 純白背景 */
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd; /* 淺灰色邊框 */
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 陰影效果 */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        .room-type-card h2 {
+            font-size: 1.4rem;
+            color: #333; /* 深灰色文字 */
+            text-align: center; /* 置中 */
+            margin-bottom: 10px;
+        }
+
+        .room-type-card p {
+            font-size: 1.1rem;
+            color: #555; /* 更淺的灰色 */
+            text-align: center;
+            margin: 5px 0;
+        }
+
+        .room-type-card-info {
+            display: flex; /* 使用 Flexbox 排列 */
+            justify-content: center; /* 水平居中 */
+            align-items: center; /* 垂直居中 */
+            gap: 20px; /* 中間添加空隙 */
+            margin-top: 10px; /* 與上方標題保持距離 */
+        }
+
+        .room-type-card-info p {
+            font-size: 1.1rem; /* 調整文字大小 */
+            color: #555; /* 字體顏色 */
+            margin: 0; /* 去除段落預設間距 */
+        }
+
+
+        .room-buttons {
+            display: flex;
+            flex-wrap: wrap; /* 讓按鈕自動換行 */
+            justify-content: space-between; /* 按鈕水平分散 */
+            gap: 10px; /* 按鈕間距 */
+            margin-top: 10px;
+        }
+
+        .room-buttons button {
+            width: calc(10% - 10px); /* 按鈕寬度調整為10%減去間距，確保一行最多10個按鈕 */
+            padding: 10px;
+            font-size: 14px;
+            text-align: center;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #fff;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        /* 狀態為 0 = 綠色 (可用) */
+        .room-buttons button.available {
+            background-color: #28a745; /* 綠色 */
+            border: 1px solid #28a745;
+        }
+
+        .room-buttons button.available:hover {
+            background-color: #218838;
+            border-color: #218838;
+            transform: scale(1.05);
+        }
+
+        /* 狀態為 1 = 紅色 (已預訂) */
+        .room-buttons button.occupied {
+            background-color: #dc3545; /* 紅色 */
+            border: 1px solid #dc3545;
+        }
+
+        .room-buttons button.occupied:hover {
+            background-color: #c82333;
+            border-color: #c82333;
+            transform: scale(1.05);
+        }
+
+        /* 狀態為 2 = 灰色 (維修中) */
+        .room-buttons button.unavailable {
+            background-color: #6c757d; /* 灰色 */
+            border: 1px solid #6c757d;
+        }
+
+        .room-buttons button.unavailable:hover {
+            background-color: #5a6268;
+            border-color: #5a6268;
+            transform: scale(1.05);
+        }
+
+        /* 彈出視窗樣式 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.hidden {
+            display: none;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-label {
+            font-size: 0.9rem;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .status-label.available {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .status-label.occupied {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .status-label.unavailable {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .modal-content textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: none;
+        }
+
+        .modal-actions {
+            text-align: right;
+            margin-top: 20px;
+        }
+
+        .modal-actions button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            font-size: 1rem;
+            margin-left: 10px;
+        }
+
+        .change-status {
+            margin-top: 20px;
+        }
+
+        .change-status select {
+            width: 100%;
+            padding: 8px;
+            font-size: 1rem;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        /* Footer 樣式 */
+        footer {
+            background-color: #333;
+            /* footer 改為深色 */
+            padding: 10px 30px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #fff;
+            border-top: 1px solid #ddd;
+            margin-top: auto;
+        }
+
+        /* 彈窗容器 */
+        /* 彈窗背景 */
+        #room-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* 半透明黑色背景 */
+            display: flex;
+            align-items: center; /* 垂直居中 */
+            justify-content: center; /* 水平居中 */
+            z-index: 1000;
+        }
+
+        /* 彈窗內容 */
+        #room-modal .modal-content {
+            background-color: #fff; /* 白色背景 */
+            border-radius: 8px;
+            padding: 20px;
+            width: 90%; /* 默認寬度 */
+            max-width: 500px; /* 最大寬度 */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.3s ease; /* 動畫效果 */
+        }
+
+        /* 彈窗標題 */
+        #room-modal .modal-content h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        /* 彈窗的每一行文字 */
+        #room-modal .modal-content p {
+            font-size: 1rem;
+            margin: 10px 0;
+            color: #444;
+        }
+
+        /* 訂單明細區域 */
+        #modal-order-details {
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .modal-order-details{
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        /* 關閉按鈕 */
+        #modal-close-button {
+            display: block;
+            margin: 20px auto 0;
+            padding: 10px 20px;
+            font-size: 1rem;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #modal-close-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* 隱藏彈窗 */
+        #room-modal.hidden {
+            display: none;
+        }
+
+        /* 顯示彈窗 */
+        #room-modal.active {
+            display: flex; /* 確保顯示為彈窗 */
+        }
+
+        .status-indicator {
+            margin: 10px 0;
+        }
+
+        .status-occupied {
+            color: red;
+            font-weight: bold;
+        }
+
+
+        /*狀態*/
+        /* 標題 */
+        #room-status-modal h2 {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        /* 狀態標示 */
+        #room-status-modal .status-indicator {
+            font-size: 16px;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        #room-status-modal .status-indicator .status-occupied {
+            color: red;
+            font-weight: bold;
+        }
+
+        /* 按鈕容器 */
+        #room-status-modal .modal-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        /* 按鈕樣式 */
+        #room-status-modal .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        #room-status-modal .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        #room-status-modal .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        #room-status-modal .btn-secondary {
+            background-color: #6c757d;
+            color: #fff;
+        }
+
+        #room-status-modal .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        /* 下拉選單樣式 */
+        #room-status-modal select {
+            width: 100%;
+            padding: 8px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <a th:href="@{/frontDesk}">
+                <img th:src="@{/imgs/CheckInOut_logo.png}" alt="logo">
+                <span>飯店管理系統</span>
+            </a>
+        </div>
+        <nav>
+            <a th:href="@{/frontDesk}" class="active">櫃台系統</a>
+            <a th:href="@{/business}" th:if="${#httpSession.getAttribute('employee').title == '負責人' ||
+          #httpSession.getAttribute('employee').title == '總經理'}">飯店管理</a>
+            <a th:href="@{/orders}">訂單管理</a>
+            <a th:href="@{/comment}">評論管理</a>
+            <a th:href="@{/client}">客戶管理</a>
+<!--            <a th:href="@{/report}">報表分析</a>-->
+        </nav>
+        <div class="user">
+            <span class="icon">🔔</span>
+            <span class="icon"><a th:href="@{/backChatRoom}" title="進入客服聊天室">💬</a></span>
+            <button class="hotel-button" th:text="${#httpSession.getAttribute('hotel').name}"></button>
+            <div class="dropdown">
+                <ul>
+                    <li><a th:href="@{/account}">帳號設定</a></li>
+                    <li id="logout-option">登出</li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <!-- 登出彈窗 -->
+    <div id="logout-modal" class="hidden">
+        <div class="logout-modal-content">
+            <span class="logout-modal-close-btn" id="logout-modal-close-btn">×</span>
+            <h2>登出選項</h2>
+            <p>您確定要登出或切換使用者嗎？</p>
+            <div class="logout-modal-actions">
+                <!-- 登出按鈕 -->
+                <form th:action="@{/logout}" method="POST" id="logout-form">
+                    <button type="submit" id="logout-modal-logout-button">登出</button>
+                </form>
+                <!-- 切換使用者按鈕 -->
+                <form th:action="@{/switch-user}" method="POST" id="switch-user-form">
+                    <button type="submit" id="logout-modal-switch-button">切換使用者</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 主體內容 -->
+    <div class="container">
+        <!-- Aside -->
+        <aside>
+            <nav>
+                <a th:href="@{/frontDesk/checkIn}">Check in</a>
+                <a th:href="@{/frontDesk/checkOut}">Check out</a>
+                <a th:href="@{/frontDesk/roomStatus}" class="active">房間動態</a>
+            </nav>
+        </aside>
+
+        <!-- Main -->
+        <main>
+            <h1>房間動態</h1>
+            <!-- 加載圖片 -->
+<!--            <div id="loading" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 500px;">-->
+<!--                <img th:src="@{/imgs/loading.gif}" alt="Loading..." style="max-width: 300px; max-height: 300px;">-->
+<!--                <p style="margin-top: 20px; font-size: 1.2rem; color: #555;">loading......</p>-->
+<!--            </div>-->
+            <!-- 房型動態區域 -->
+            <div id="room-dynamic-sections"></div>
+        </main>
+
+        <!-- 彈出視窗 -->
+        <div id="room-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2>房間狀態</h2>
+                <p><strong>房間號碼：</strong><span id="modal-room-number">載入中...</span></p> <!-- 新增顯示房間號碼 -->
+                <p class="status-indicator"><strong>狀態：</strong><span id="modal-room-status" class="status-occupied">使用中</span></p> <!-- 新增狀態標示 -->
+                <div class="modal-order-details">
+                <p><strong>訂單編號：</strong><span id="modal-order-id">載入中...</span></p>
+                <p><strong>會員編號：</strong><span id="modal-member-id">載入中...</span></p>
+                <p><strong>會員姓名：</strong><span id="modal-member-name">載入中...</span></p>
+                <p><strong>備註：</strong><span id="modal-note">載入中...</span></p>
+                </div>
+                <div id="modal-order-details">
+                    <!-- 訂單明細 -->
+                </div>
+                <div class="modal-order-details">
+                <p><strong>住客姓名：</strong><span id="modal-customer-name"></span></p>
+                <p><strong>住客電話：</strong><span id="modal-customer-phone"></span></p>
+                </div>
+                <button id="modal-close-button" class="btn btn-primary">關閉</button>
+            </div>
+        </div>
+
+<!--         空房狀態-->
+        <div id="room-status-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2>房間狀態</h2>
+                <p><strong>房間號碼：</strong><span id="status-room-number">載入中...</span></p>
+                <p><strong>當前狀態：</strong><span id="status-room-current">載入中...</span></p>
+                <p>
+                    <strong>切換狀態：</strong>
+                    <select id="status-room-select">
+                        <option value="0">空房</option>
+                        <option value="2">維修中</option>
+                    </select>
+                </p>
+                <button id="status-confirm-button" class="btn btn-primary">確認</button>
+                <button id="status-close-button" class="btn btn-secondary">關閉</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        &copy; 2024 Check in out. All rights reserved.
+    </footer>
+
+    <script>
+        const contextPath = "[[${#httpServletRequest.contextPath}]]"; // 動態獲取 contextPath
+        //飯店彈窗
+        document.querySelector('.hotel-button').addEventListener('click', () => {
+            const dropdown = document.querySelector('.dropdown');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // 取得彈窗和按鈕
+        const logoutModal = document.getElementById("logout-modal");
+        const logoutModalCloseBtn = document.getElementById("logout-modal-close-btn");
+        const logoutModalLogoutButton = document.getElementById("logout-modal-logout-button");
+        const logoutModalSwitchButton = document.getElementById("logout-modal-switch-button");
+        const logoutOption = document.getElementById("logout-option"); // 假設觸發按鈕未修改 id
+
+        // 顯示彈窗
+        logoutOption.addEventListener("click", function () {
+            logoutModal.classList.add("show"); // 添加 class 顯示彈窗
+        });
+
+        // 關閉彈窗 (x 按鈕)
+        logoutModalCloseBtn.addEventListener("click", function () {
+            logoutModal.classList.remove("show"); // 移除 class 隱藏彈窗
+        });
+
+        // 登出按鈕功能
+        logoutModalLogoutButton.addEventListener("click", function () {
+            alert("您已登出！");
+            document.location.href = "login-1.html";
+        });
+
+        // 切換使用者按鈕功能
+        logoutModalSwitchButton.addEventListener("click", function () {
+            alert("切換使用者！");
+            document.location.href = "login-2.html";; // 隱藏彈窗
+        });
+
+        // 點擊彈窗外部關閉 (選擇性功能)
+        window.addEventListener("click", function (e) {
+            if (e.target === logoutModal) {
+                logoutModal.classList.remove("show"); // 隱藏彈窗
+            }
+        });
+
+
+
+        //  以下為動態api
+        //  以下為動態api
+        //  以下為動態api
+        const loadingElement = document.getElementById("loading");
+        const roomDynamicSections = document.getElementById("room-dynamic-sections");
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // 顯示加載圖片
+            // loadingElement.style.display = "flex";
+            // roomDynamicSections.style.display = "none";
+            // Fetch 所有房型資料
+            fetch(`${contextPath}/api/roomType/roomTypes`)
+                .then(response => response.json()) // 將回應轉換成 JSON 格式
+                .then(roomTypes => {
+
+                    // 遍歷每個房型，生成對應的卡片和按鈕
+                    roomTypes.forEach(roomType => {
+                        const card = document.createElement("div");
+                        card.classList.add("room-type-card"); // 添加房型卡片的樣式
+
+                        // 卡片內容
+                        card.innerHTML = `
+                            <h2>${roomType.roomName}</h2>
+                            <div class="room-type-card-info">
+                                <p>總房間數: ${roomType.roomNum} 間</p>
+                                <p>可容納人數: ${roomType.maxPerson} 人</p>
+                            </div>
+                            <div class="room-buttons" id="room-buttons-${roomType.roomTypeId}">
+                                <!-- 房間按鈕將動態生成 -->
+                            </div>
+                        `;
+
+                        // 將生成的卡片加入動態區域
+                        roomDynamicSections.appendChild(card);
+
+                        // Fetch 該房型的所有房間資料
+                        fetch(`${contextPath}/api/room/byRoomType/${roomType.roomTypeId}`)
+                            .then(response => response.json()) // 將回應轉換成 JSON 格式
+                            .then(rooms => {
+                                const buttonContainer = document.getElementById(`room-buttons-${roomType.roomTypeId}`); // 房型卡片內的按鈕容器
+
+                                // 遍歷每個房間，生成對應的按鈕
+                                rooms.forEach(room => {
+                                    const button = document.createElement("button");
+                                    button.textContent = `房間 ${room.number}`; // 按鈕顯示房間號碼
+                                    button.setAttribute("data-room-id", room.roomId); // 新增房間 ID
+
+                                    // 根據房間狀態設置按鈕的樣式
+                                    if (room.status === 0) {
+                                        button.classList.add("available"); // 狀態: 可用 (綠色)
+                                    } else if (room.status === 1) {
+                                        button.classList.add("occupied"); // 狀態: 已預訂 (紅色)
+                                    } else if (room.status === 2) {
+                                        button.classList.add("unavailable"); // 狀態: 維修中 (灰色)
+                                    }
+
+                                    // 添加按鈕的點擊事件
+                                    // 顯示彈窗
+                                    function showModal() {
+                                        const modal = document.getElementById("room-modal");
+                                        modal.classList.remove("hidden"); // 移除隱藏
+                                        modal.classList.add("active"); // 添加顯示
+                                    }
+
+                                    // 隱藏彈窗
+                                    function closeModal() {
+                                        const modal = document.getElementById("room-modal");
+                                        modal.classList.add("hidden"); // 添加隱藏
+                                        modal.classList.remove("active"); // 移除顯示
+                                    }
+
+                                    // 綁定關閉按鈕
+                                    document.getElementById("modal-close-button").addEventListener("click", closeModal);
+                                    // 添加按鈕的點擊事件
+                                    button.addEventListener("click", () => handleRoomButtonClick(room));
+
+                                    // 將按鈕加入對應的房型卡片
+                                    buttonContainer.appendChild(button);
+                                });
+                            })
+                            .catch(error => console.error("Error fetching rooms:", error)); // 處理房間資料的錯誤
+                    });
+                })
+                .catch(error => console.error("Error fetching room types:", error)) // 處理房型資料的錯誤
+                .finally(() => {
+                    // closeimg(); // 確保無論請求成功或失敗都隱藏加載圖片
+                });
+        });
+
+        function closeimg(){
+            loadingElement.style.display = "none";
+            roomDynamicSections.style.display = "block";
+        }
+
+        function handleRoomButtonClick(room) {
+            if (room.status === 1) {
+                fetch(`${contextPath}/api/roomStatus/roomDetails?roomId=${room.roomId}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Failed to fetch room details: HTTP ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        updateRoomDetailsModal(data, room.status);
+                        showModal("room-modal");
+                    })
+                    .catch(error => {
+                        console.error("Error fetching room details:", error);
+                        alert("無法載入房間訂單詳情，請稍後重試！");
+                    });
+            } else if (room.status === 0 || room.status === 2) {
+                setupStatusChangeModal(room);
+            }
+        }
+
+        // 更新房間詳情彈窗
+        function updateRoomDetailsModal(data, status) {
+            document.getElementById("modal-room-number").textContent = data.roomNumber || "未提供";
+            document.getElementById("modal-order-id").textContent = data.orderId || "未提供";
+            document.getElementById("modal-member-id").textContent = data.memberId || "未提供";
+            document.getElementById("modal-member-name").textContent = data.memberName || "未提供";
+            document.getElementById("modal-note").textContent = data.memo || "無備註";
+            document.getElementById("modal-customer-name").textContent = data.customerName || "未提供";
+            document.getElementById("modal-customer-phone").textContent = data.customerPhoneNumber || "未提供";
+
+            // 動態設定狀態標示
+            const statusElement = document.getElementById("modal-room-status");
+            statusElement.textContent = status === 1 ? "使用中" : "未知狀態";
+            statusElement.classList.toggle("status-occupied", status === 1);
+
+            const detailsContainer = document.getElementById("modal-order-details");
+            detailsContainer.innerHTML = ""; // 清空現有內容
+            data.orderDetails.forEach(detail => {
+                const detailDiv = document.createElement("div");
+                detailDiv.innerHTML = `
+            <p><strong>入住人數：</strong>${detail.guestNum}</p>
+            <p><strong>早餐：</strong>${detail.breakfast ? "含早餐" : "不含早餐"}</p>
+        `;
+                detailsContainer.appendChild(detailDiv);
+            });
+        }
+
+        // 設置房間狀態切換彈窗
+        function setupStatusChangeModal(room) {
+            const modal = document.getElementById("room-status-modal");
+
+            // 填充房間資訊
+            document.getElementById("status-room-number").textContent = room.number;
+            const statusElement = document.getElementById("status-room-current");
+            statusElement.textContent = room.status === 0 ? "空房" : "維修中";
+
+            // 更新狀態選項
+            const statusSelect = document.getElementById("status-room-select");
+            statusSelect.value = room.status;
+
+            // 綁定確認按鈕的邏輯
+            document.getElementById("status-confirm-button").onclick = () => {
+                const newStatus = parseInt(statusSelect.value, 10);
+
+                fetch(`${contextPath}/api/roomStatus/updateRoomStatus`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        roomId: room.roomId,
+                        status: newStatus,
+                    }),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Failed to update room status: HTTP ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(result => {
+                        alert("房間狀態更新成功！");
+                        modal.classList.add("hidden");
+                        // location.reload(); // 重新載入頁面
+                    })
+                    .catch(error => {
+                        console.error("Error updating room status:", error);
+                        alert("無法更新房間狀態，請稍後重試！");
+                    });
+            };
+
+            // 綁定關閉按鈕的邏輯
+            document.getElementById("status-close-button").onclick = () => {
+                modal.classList.add("hidden");
+            };
+
+            // 顯示彈窗
+            modal.classList.remove("hidden");
+        }
+
+        // 顯示特定彈窗
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove("hidden");
+            modal.classList.add("active");
+        }
+
+
+        // web socket
+        // 建立 WebSocket 連線
+        const socket = new WebSocket(`${contextPath}/ws`);
+        const roomDataCache = {}; // 用於緩存房間的 Check-In 數據
+        socket.onopen = () => {
+            // console.log("WebSocket 連線已建立");
+        };
+
+        socket.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            // console.log("接收到推播消息:", message);
+
+            if (message.type === "roomStatus") {
+                // 房間狀態更新
+                updateRoomStatusOnPage(message.roomId, message.status);
+                // 根據狀態綁定按鈕行為
+                const roomButton = document.querySelector(`[data-room-id="${message.roomId}"]`);
+                if (roomButton) {
+                    // 移除之前的事件處理器
+                    roomButton.replaceWith(roomButton.cloneNode(true));
+                    // 重新查找按鈕，並綁定新的點擊事件
+                    const newRoomButton = document.querySelector(`[data-room-id="${message.roomId}"]`);
+                    newRoomButton.addEventListener("click", () => handleRoomButtonClick({
+                        roomId: message.roomId,
+                        status: message.status,
+                    }));
+                }
+            } else {
+                // console.warn("未知的推播消息格式:", message);
+            }
+        };
+
+        socket.onclose = () => {
+            // console.log("WebSocket 連線已關閉");
+        };
+
+        // 更新頁面上的房間狀態
+        function updateRoomStatusOnPage(roomId, status) {
+            const roomButton = document.querySelector(`[data-room-id="${roomId}"]`);
+            if (roomButton) {
+                // 清除舊的狀態
+                roomButton.className = "";
+
+                // 根據新狀態更新按鈕樣式
+                if (status === 0) {
+                    roomButton.classList.add("available"); // 綠色: 可用
+                } else if (status === 1) {
+                    roomButton.classList.add("occupied"); // 紅色: 已預訂
+                } else if (status === 2) {
+                    roomButton.classList.add("unavailable"); // 灰色: 維修中
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
