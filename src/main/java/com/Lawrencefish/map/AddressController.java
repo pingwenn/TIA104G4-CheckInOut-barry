@@ -13,7 +13,7 @@ import java.util.Map;
 @RequestMapping("/api/address")
 public class AddressController {
 
-    private final String API_KEY = "AIzaSyB57iDNEzVhM7aKXRz3vjz6d1Y_Mg07G1E"; // 替換為你的 Google Maps API Key
+    private final String API_KEY = "A"; // 替換為你的 Google Maps API Key
 
     @GetMapping("/geocode")
     public Map<String, Object> getCoordinates(@RequestParam("address") String address) {
