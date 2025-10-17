@@ -61,7 +61,7 @@ public class AuthenticationFilter implements Filter {
         		httpResponse.sendRedirect(contextPath + "/admin/login");
         		return;
         	}
-        }
+        } 
 
         // 前台會員路徑驗證 -byYuCheng
         if (USER_PROTECTED_PATHS.stream().anyMatch(path::startsWith)) {
