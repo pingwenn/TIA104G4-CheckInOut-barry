@@ -209,6 +209,7 @@ public class AdminController {
         return "admin/adminlogin";  // 這裡返回的是 templates 目錄下的 adminlogin.html
     }
     
+    
     // 處理登入表單提交
     @PostMapping("/login")
     public String handleLogin(@RequestParam String email, @RequestParam String password, HttpSession session, RedirectAttributes redirectAttributes) {
@@ -231,7 +232,8 @@ public class AdminController {
     		redirectAttributes.addFlashAttribute("error", "帳號或密碼錯誤");
     		return "redirect:/admin/login"; // 回到登入頁面
     	}
-    }
+    } 
+   
     
     @GetMapping("/industryBackend")
     public String showIndustryBackend(@RequestParam(required = false) Integer id,
