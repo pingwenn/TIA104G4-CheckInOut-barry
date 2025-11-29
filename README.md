@@ -35,45 +35,6 @@
 *   **IDE：** Eclipse
 *   **資料庫工具：** MySQL Workbench, DBeaver
 
-## 專案設定與啟動
-
-### 1. 資料庫設定
-*   請確保您的 MySQL 資料庫已啟動。
-*   建立一個名為 `checkinout` 的資料庫。
-*   修改 `src/main/resources/application.properties` 中的資料庫連線資訊，確保 `spring.datasource.username` 和 `spring.datasource.password` 與您的 MySQL 設定相符。
-    ```properties
-    spring.datasource.url=jdbc:mysql://localhost:3306/checkinout?serverTimezone=Asia/Taipei
-    spring.datasource.username=root
-    spring.datasource.password=123456
-    spring.jpa.hibernate.ddl-auto=update
-    ```
-    (註：`spring.jpa.hibernate.ddl-auto=update` 會在應用程式啟動時自動更新資料庫結構，開發階段方便，生產環境請謹慎使用或改為 `validate` 或 `none`)
-
-### 2. Redis 設定
-*   請確保您的 Redis 服務已啟動。
-
-### 3. 郵件服務設定
-*   若需使用郵件發送功能，請在 `application.properties` 中配置您的 Gmail 帳號資訊。
-    ```properties
-    spring.mail.host=smtp.gmail.com
-    spring.mail.port=587
-    spring.mail.username=您的Gmail帳號
-    spring.mail.password=您的應用程式密碼 (或真實密碼，不建議)
-    spring.mail.properties.mail.smtp.auth=true
-    spring.mail.properties.mail.smtp.starttls.enable=true
-    spring.mail.properties.mail.smtp.ssl.trust=smtp.gmail.com
-    ```
-    (註：若使用 Gmail，建議使用應用程式密碼而非真實密碼，以提高安全性。)
-
-### 4. 啟動應用程式
-*   **使用 Maven 啟動：**
-    在專案根目錄下執行：
-    ```bash
-    mvn spring-boot:run
-    ```
-*   **使用 IDE 啟動：**
-    在您的 IDE 中找到 `TIA104G4CheckInOutApplication.java` (或類似名稱的主應用程式類)，右鍵執行 `main` 方法。
-
 ## 專案貢獻
 本專案管理員系統由 Barry 獨立開發與維護。
 
