@@ -1,0 +1,16 @@
+# Compiled output
+/target/
+/bin/
+
+# IDE files
+.project
+.classpath
+.settings/
+*.launch
+*.log
+
+# OS files
+.DS_Store
+
+# Tomcat work files
+/work/
