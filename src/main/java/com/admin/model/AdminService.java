@@ -1,6 +1,7 @@
 package com.admin.model;
 
 import java.awt.print.Pageable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -11,18 +12,48 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-
 @Service("AdminService")
 public class AdminService {
 	
 	@Autowired
 	private AdminRepository repository;
 	
+//	@Autowired //注入加密工具
+//	private PasswordEncoder passwordEncoder;
+	
 //	@Autowired
 //	private AdminLogRepository logRepository;
 	
 //	@Autowired
 //	private SessionFactory sessionFactory;
+	
+	 /*@Override
+	 public UserDetails loadUserByUsername(String username) throws
+	      UsernameNotFoundException {
+	            // 在 Spring Security 中，"username" 就是我們登入時用的識別碼，在我們的系統中，它對應的是 email
+	            Admin admin = repository.findByEmail(username);
+	    
+	            if (admin == null) {
+	                // 如果找不到使用者，必須拋出這個例外
+	                throw new UsernameNotFoundException("User not found with email: " + username);
+	            }
+	    
+	            // 將使用者的權限 (permissions) 轉換成 Spring Security 需要的 GrantedAuthority 格式
+	            List<GrantedAuthority> authorities = new ArrayList<>();
+	            if (admin.getPermissions() == 1) {
+	                authorities.add(new SimpleGrantedAuthority(
+	      "ROLE_SUPERVISOR"));
+	            } else {
+	                authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"
+	      ));
+	            }
+	    
+	            // 將我們自己的 Admin 物件，轉換成 Spring Security 內部使用的 UserDetails 物件
+	            // 需要提供：1. 使用者名稱(email)  2. 加密後的密碼  3. 權限列表
+	            return new User(admin.getEmail(), admin.getAdminPassword(),
+	      authorities);
+	        }*/
+
 	
 	// 搜尋方法
     public List<Admin> searchAdmins(String keyword, Byte status, Byte permissions){
@@ -73,6 +104,7 @@ public class AdminService {
 		Admin admin = repository.findByEmail(email);
 		if (admin != null) {
 			System.out.println("尋找管理員:" + admin.getEmail());
+			// 使用passwordEncoder.matches比對「使用者輸入的明文密碼」與「資料庫中儲存的加密密碼」
 			if (admin.getAdminPassword().equals(password)) {
 				System.out.println("密碼正確");
 				return admin; // 帳密正確 回傳管理員資料				
@@ -101,6 +133,7 @@ public class AdminService {
 	
 	// 新增管理員
 	public Admin insert (Admin admin) {
+				
 		return repository.save(admin);
 	}
 	

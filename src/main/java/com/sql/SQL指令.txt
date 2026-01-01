@@ -272,7 +272,7 @@ CREATE TABLE admin (
     admin_id INT AUTO_INCREMENT PRIMARY KEY,
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     admin_account VARCHAR(20) NOT NULL UNIQUE,
-    admin_password VARCHAR(12) NOT NULL,
+    admin_password VARCHAR(225) NOT NULL,
     phone_number VARCHAR(10) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     status TINYINT NOT NULL COMMENT '1 = 啟用, 0 = 停用',
