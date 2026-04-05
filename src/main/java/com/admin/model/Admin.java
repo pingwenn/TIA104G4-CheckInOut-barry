@@ -27,7 +27,7 @@ public class Admin {
 	@Column(name = "admin_account", length = 20, nullable = false, unique = true) // unique = true唯一&不能重複
 	private String adminAccount;
 	
-	@Column(name = "admin_password", length = 20, nullable = false)
+	@Column(name = "admin_password", length = 225, nullable = false)
 	private String adminPassword;
 	
 	@Column(name = "phone_number", length = 10, nullable = false)
